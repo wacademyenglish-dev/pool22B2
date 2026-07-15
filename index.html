@@ -1,0 +1,1609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WOLFAITH | The Chosen: Bethesda — B2 Premium</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600;1,800&family=Cinzel:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+/* =============================================
+   WOLFAITH DESIGN SYSTEM — V3 PREMIUM
+   ============================================= */
+:root {
+  --gold: #D4AF37;
+  --gold-light: #F0D060;
+  --gold-dark: #8B6914;
+  --gold-muted: rgba(212,175,55,0.12);
+  --burg: #722F37;
+  --burg-light: #A0404A;
+  --ink: #080808;
+  --paper: #fdf8ef;
+  --glass: rgba(6,4,4,0.75);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100vw; height: 100vh; overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  background: var(--ink);
+  color: #e8e0d0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- ANIMATED BACKGROUND ---- */
+.bg-canvas {
+  position: fixed; inset: 0; z-index: 0; overflow: hidden;
+  background: radial-gradient(ellipse 120% 80% at 50% 0%, #1a0a08 0%, #080808 55%, #030203 100%);
+}
+.bg-particle {
+  position: absolute; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, var(--gold) 0%, transparent 70%);
+  animation: particle-float linear infinite;
+  opacity: 0;
+}
+@keyframes particle-float {
+  0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+  10%  { opacity: 0.15; }
+  90%  { opacity: 0.08; }
+  100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+}
+.bg-cross-grid {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: 
+    linear-gradient(rgba(212,175,55,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212,175,55,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.bg-vignette {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 70% 70% at 50% 50%, transparent 50%, rgba(0,0,0,0.6) 100%);
+}
+
+/* ---- GLOBAL FRAME ---- */
+.gold-frame {
+  position: fixed; inset: 12px; border-radius: 18px; pointer-events: none; z-index: 200;
+  border: 1px solid rgba(212,175,55,0.18);
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.5), inset 0 0 80px rgba(0,0,0,0.3);
+}
+.gold-frame::before, .gold-frame::after {
+  content: '✦'; position: absolute; color: rgba(212,175,55,0.4);
+  font-size: 1rem; line-height: 1;
+}
+.gold-frame::before { top: 10px; left: 10px; }
+.gold-frame::after  { bottom: 10px; right: 10px; }
+
+/* ---- HEADER ---- */
+header {
+  position: fixed; top: 0; left: 0; right: 0; height: 72px; z-index: 150;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2.5rem;
+  background: linear-gradient(to bottom, rgba(8,8,8,0.9) 0%, transparent 100%);
+}
+.logo {
+  font-family: 'Cinzel', serif; font-size: 1.5rem; font-weight: 600;
+  color: var(--gold); letter-spacing: 0.15em;
+  text-shadow: 0 0 20px rgba(212,175,55,0.4);
+}
+.logo-badge {
+  font-family: 'Inter', sans-serif; font-size: 0.65rem; font-weight: 700;
+  color: var(--gold); border: 1px solid rgba(212,175,55,0.4);
+  padding: 3px 10px; border-radius: 99px; letter-spacing: 0.2em; text-transform: uppercase;
+  margin-left: 0.75rem; vertical-align: middle;
+}
+.btn-journal {
+  display: flex; align-items: center; gap: 0.5rem;
+  background: rgba(0,0,0,0.5); border: 1px solid rgba(212,175,55,0.25);
+  color: var(--gold); padding: 0.5rem 1.25rem; border-radius: 99px;
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em;
+  cursor: pointer; transition: all 0.3s;
+}
+.btn-journal:hover { background: rgba(212,175,55,0.1); border-color: var(--gold); }
+
+/* ---- SLIDES ---- */
+#lesson { position: fixed; inset: 0; z-index: 10; }
+.slide {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 5rem 2.5rem 6rem;
+  overflow-y: auto; overflow-x: hidden;
+  opacity: 0; visibility: hidden;
+  transform: translateY(30px) scale(0.97);
+  transition: all 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.slide.active  { opacity: 1; visibility: visible; transform: none; }
+.slide.exiting { opacity: 0; transform: translateY(-20px) scale(1.02); }
+.slide::-webkit-scrollbar { width: 4px; }
+.slide::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.2); border-radius: 4px; }
+
+/* ---- GLASS CARD ---- */
+.card {
+  background: rgba(8,5,5,0.7);
+  border: 1px solid rgba(212,175,55,0.15);
+  border-radius: 20px;
+  backdrop-filter: blur(24px);
+  box-shadow: 0 40px 80px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.04), inset 0 -1px 0 rgba(0,0,0,0.4);
+}
+.card-glow { box-shadow: 0 40px 80px rgba(0,0,0,0.7), 0 0 40px rgba(212,175,55,0.06), inset 0 1px 0 rgba(255,255,255,0.04); }
+
+/* ---- SECTION LABEL ---- */
+.section-label {
+  font-family: 'Cinzel', serif; font-size: 0.7rem; font-weight: 600;
+  color: var(--gold); letter-spacing: 0.4em; text-transform: uppercase;
+  opacity: 0.8; margin-bottom: 0.75rem;
+}
+.section-divider {
+  width: 40px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 0.75rem auto;
+}
+
+/* ---- TYPOGRAPHY ---- */
+.t-display { font-family: 'Playfair Display', serif; font-style: italic; }
+.t-title   { font-family: 'Cinzel', serif; }
+.t-body    { font-family: 'Inter', sans-serif; font-weight: 300; }
+.t-quote   { font-family: 'Playfair Display', serif; font-style: italic; }
+
+.text-gold  { color: var(--gold); }
+.text-burg  { color: var(--burg-light); }
+.text-paper { color: var(--paper); }
+
+/* ---- GOLDEN BUTTON ---- */
+.btn {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  font-family: 'Cinzel', serif; font-size: 0.75rem; font-weight: 600;
+  letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer;
+  border-radius: 99px; transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  border: none; padding: 0.9rem 2.5rem;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, var(--gold-dark) 100%);
+  color: #0a0800;
+  box-shadow: 0 8px 24px rgba(212,175,55,0.25), 0 2px 4px rgba(0,0,0,0.4);
+}
+.btn-primary:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 16px 40px rgba(212,175,55,0.4), 0 4px 8px rgba(0,0,0,0.4);
+}
+.btn-outline {
+  background: transparent;
+  border: 1px solid rgba(212,175,55,0.4);
+  color: var(--gold);
+}
+.btn-outline:hover { background: var(--gold-muted); border-color: var(--gold); }
+
+/* ---- TEACHER PROMPT ---- */
+.prompt-box {
+  max-height: 0; overflow: hidden; opacity: 0;
+  transition: max-height 0.7s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s, margin 0.5s, padding 0.5s;
+  background: linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(212,175,55,0.03) 100%);
+  border-left: 3px solid var(--gold);
+  border-radius: 0 12px 12px 0;
+}
+.prompt-box.open { max-height: 400px; opacity: 1; margin-top: 1.5rem; padding: 1.25rem 1.5rem; }
+.prompt-label {
+  font-family: 'Cinzel', serif; font-size: 0.6rem; font-weight: 600;
+  color: var(--gold); letter-spacing: 0.3em; text-transform: uppercase;
+  margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;
+}
+.prompt-text {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: 1.15rem; color: #e8e0d0; line-height: 1.6;
+}
+
+/* ---- DRAG & DROP ---- */
+.word-chip {
+  display: inline-flex; align-items: center;
+  font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.1rem;
+  padding: 0.6rem 1.4rem; border-radius: 99px; cursor: grab;
+  background: rgba(212,175,55,0.07); border: 1px solid rgba(212,175,55,0.25);
+  color: #e8e0d0; transition: all 0.25s; user-select: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.word-chip:hover { background: rgba(212,175,55,0.14); border-color: rgba(212,175,55,0.5); transform: translateY(-2px); }
+.word-chip:active { cursor: grabbing; transform: scale(0.95); }
+.word-chip.correct { border-color: #10b981; color: #10b981; background: rgba(16,185,129,0.08); }
+.word-chip.wrong   { border-color: var(--burg-light); color: var(--burg-light); background: rgba(114,47,55,0.1); }
+
+.drop-zone {
+  min-height: 80px; border: 2px dashed rgba(212,175,55,0.2); border-radius: 16px;
+  display: flex; flex-wrap: wrap; gap: 10px; padding: 1.25rem;
+  align-items: center; justify-content: center; transition: all 0.3s;
+  background: rgba(0,0,0,0.2);
+}
+.drop-zone.drag-over { border-color: var(--gold); background: rgba(212,175,55,0.05); transform: scale(1.01); }
+
+/* ---- OPINION BUTTONS ---- */
+.opinion-btn {
+  font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  padding: 0.65rem 1.4rem; border-radius: 99px; cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04);
+  color: #a0978a; transition: all 0.3s;
+}
+.opinion-btn:hover { border-color: rgba(212,175,55,0.5); color: var(--gold); transform: translateY(-2px); }
+.opinion-btn.selected {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+  color: #080808; border-color: transparent; font-weight: 800;
+  box-shadow: 0 6px 20px rgba(212,175,55,0.3);
+}
+
+/* ---- FLIP CARDS ---- */
+.flip-card { perspective: 1200px; cursor: pointer; }
+.flip-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
+.flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+.flip-face {
+  position: absolute; inset: 0; backface-visibility: hidden;
+  border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 2rem; text-align: center; border: 1px solid rgba(212,175,55,0.15);
+}
+.flip-front { background: rgba(6,4,4,0.85); }
+.flip-back  { background: linear-gradient(135deg, #6B2636 0%, #3a0d14 100%); transform: rotateY(180deg); border-color: rgba(212,175,55,0.3); }
+
+/* ---- TIMELINE ---- */
+.tl-line     { position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: rgba(255,255,255,0.06); transform: translateY(-50%); }
+.tl-progress { position: absolute; top: 50%; left: 12%; height: 4px; width: 0; transform: translateY(-50%); border-radius: 2px; background: linear-gradient(90deg, rgba(212,175,55,0.2), var(--gold)); opacity: 0; transition: width 1.8s ease-out, opacity 0.5s; }
+.tl-dot      { width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.2); background: #080808; z-index: 2; transition: all 0.5s; }
+.tl-dot.lit  { border-color: var(--gold); box-shadow: 0 0 20px rgba(212,175,55,0.6); background: var(--gold); }
+
+/* ---- 3D BIBLE (Premium Redesign) ---- */
+.bible-scene {
+  perspective: 2500px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.bible-scene::before {
+  content: ''; position: absolute;
+  width: 360px; height: 80px; bottom: -30px;
+  background: radial-gradient(ellipse, rgba(212,175,55,0.12) 0%, transparent 70%);
+  border-radius: 50%; filter: blur(10px);
+}
+.bible-book {
+  width: 340px; height: 460px; position: relative;
+  transform-style: preserve-3d;
+  transform: rotateX(45deg) rotateY(-25deg) rotateZ(20deg);
+  transition: transform 1.6s cubic-bezier(0.22, 1, 0.36, 1);
+  cursor: pointer;
+  filter: drop-shadow(-20px 40px 30px rgba(0,0,0,0.8));
+}
+.bible-book:hover:not(.open) { transform: rotateX(40deg) rotateY(-20deg) rotateZ(15deg) translateZ(20px); }
+.bible-book.open {
+  transform: rotateX(5deg) rotateY(0deg) rotateZ(0deg) translateX(80px);
+  cursor: default;
+  filter: drop-shadow(0 30px 40px rgba(0,0,0,0.7));
+}
+
+/* Base Right Page (The inside thickness) */
+.bible-page-r {
+  position: absolute; inset: 0;
+  background: url("https://www.transparenttextures.com/patterns/paper-fibers.png"), linear-gradient(to left, #ede4cc, #f8f2e4 30%, #fdf8ef 100%);
+  padding: 2.5rem 2rem; display: flex; flex-direction: column; justify-content: center;
+  border-radius: 0 8px 8px 0;
+  box-shadow: inset 20px 0 30px rgba(0,0,0,0.06);
+  transform: translateZ(0);
+}
+
+/* 3D Gold Foil Edges */
+.bible-edge {
+  position: absolute;
+  background: repeating-linear-gradient(to bottom, #D4AF37, #F0D060 2px, #8B6914 4px);
+}
+.bible-edge-right {
+  right: 0; top: 0; width: 40px; height: 100%;
+  transform-origin: right; transform: rotateY(90deg);
+  border-radius: 0 8px 8px 0;
+}
+.bible-edge-bottom {
+  bottom: 0; left: 0; width: 100%; height: 40px;
+  transform-origin: bottom; transform: rotateX(-90deg);
+  background: repeating-linear-gradient(to right, #D4AF37, #F0D060 2px, #8B6914 4px);
+  border-radius: 0 0 8px 0;
+}
+.bible-edge-top {
+  top: 0; left: 0; width: 100%; height: 40px;
+  transform-origin: top; transform: rotateX(90deg);
+  background: repeating-linear-gradient(to right, #D4AF37, #F0D060 2px, #8B6914 4px);
+  border-radius: 0 8px 0 0;
+}
+
+/* 3D Spine */
+.bible-spine {
+  position: absolute; left: 0; top: 0; width: 40px; height: 100%;
+  transform-origin: left; transform: rotateY(-90deg);
+  background: url("https://www.transparenttextures.com/patterns/dark-leather.png"), linear-gradient(to right, #1a0508 0%, #2a0a0f 50%, #3a1218 100%);
+  border-right: 2px solid rgba(212,175,55,0.3);
+  border-radius: 6px 0 0 6px;
+}
+
+/* The Flipping Front Cover Assembly */
+.bible-flip {
+  position: absolute; inset: 0;
+  transform-style: preserve-3d;
+  transform-origin: left center;
+  transform: translateZ(40px); /* Sits on top of the 40px thick pages */
+  transition: transform 1.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.bible-book.open .bible-flip {
+  transform: translateZ(40px) rotateY(-180deg);
+}
+
+/* Front Cover Styling */
+.bible-cover {
+  position: absolute; inset: 0;
+  backface-visibility: hidden;
+  background: url("https://www.transparenttextures.com/patterns/dark-leather.png"), linear-gradient(160deg, #4a181f 0%, #2a0a0f 40%, #180408 80%, #0e0205 100%);
+  border: 2px solid var(--gold); border-radius: 0 8px 8px 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.75rem;
+  box-shadow: inset 6px 0 16px rgba(0,0,0,0.6), inset -2px 0 8px rgba(212,175,55,0.05);
+}
+.bible-cover::before {
+  content: ''; position: absolute; inset: 10px;
+  border: 1px solid rgba(212,175,55,0.25); border-radius: 4px 8px 8px 4px;
+  pointer-events: none;
+}
+.bible-cover-cross {
+  width: 50px; height: 70px; position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.bible-cover-cross::before {
+  content: ''; position: absolute;
+  width: 3px; height: 100%;
+  background: linear-gradient(to bottom, rgba(212,175,55,0.1), var(--gold), rgba(212,175,55,0.1));
+}
+.bible-cover-cross::after {
+  content: ''; position: absolute;
+  width: 60%; height: 3px; top: 28%;
+  background: linear-gradient(to right, rgba(212,175,55,0.1), var(--gold), rgba(212,175,55,0.1));
+}
+.bible-cover-title {
+  font-family: 'Cinzel', serif; font-size: 1.6rem; font-weight: 700;
+  color: var(--gold);
+  text-shadow: 0 0 30px rgba(212,175,55,0.5), 0 2px 4px rgba(0,0,0,0.5);
+  letter-spacing: 0.2em;
+}
+.bible-cover-subtitle {
+  font-family: 'Cinzel', serif; font-size: 0.55rem; font-weight: 600;
+  letter-spacing: 0.5em; color: rgba(212,175,55,0.4);
+}
+.bible-cover-line {
+  width: 60px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.5;
+}
+.bible-cover-corner {
+  position: absolute; width: 24px; height: 24px;
+  border-color: rgba(212,175,55,0.3); border-style: solid; border-width: 0;
+}
+.bible-cover-corner.tl { top: 18px; left: 12px; border-top-width: 1px; border-left-width: 1px; }
+.bible-cover-corner.tr { top: 18px; right: 18px; border-top-width: 1px; border-right-width: 1px; }
+.bible-cover-corner.bl { bottom: 18px; left: 12px; border-bottom-width: 1px; border-left-width: 1px; }
+.bible-cover-corner.br { bottom: 18px; right: 18px; border-bottom-width: 1px; border-right-width: 1px; }
+
+/* Inside Left Page Styling */
+.bible-page-l {
+  position: absolute; inset: 0;
+  backface-visibility: hidden;
+  transform: rotateY(180deg);
+  background: url("https://www.transparenttextures.com/patterns/paper-fibers.png"), linear-gradient(to right, #ede4cc, #f8f2e4 30%, #fdf8ef 100%);
+  padding: 2.5rem 2rem; display: flex; flex-direction: column; justify-content: center;
+  border-radius: 8px 0 0 8px;
+  box-shadow: inset -20px 0 30px rgba(0,0,0,0.06);
+}
+
+/* --- VERSE LABEL & TEXT --- */
+.bible-verse-label {
+  font-family: 'Cinzel', serif; font-size: 0.55rem; font-weight: 700;
+  letter-spacing: 0.3em; text-transform: uppercase;
+  color: #8B6914;
+  margin-bottom: 1rem; padding-bottom: 0.6rem;
+  border-bottom: 1px solid rgba(139,105,20,0.2);
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.bible-verse-label::before { content: '❧'; font-size: 0.8rem; color: rgba(139,105,20,0.35); }
+.bible-verse-text {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: 1rem; color: #2a1a10; line-height: 1.85;
+}
+.bible-verse-num {
+  font-family: 'Cinzel', serif; font-weight: 700;
+  font-size: 2.5rem; color: rgba(139,105,20,0.12);
+  position: absolute; top: 20px; right: 20px;
+  line-height: 1;
+}
+
+/* --- RIBBON --- */
+.bible-ribbon {
+  position: absolute; top: -6px; right: 20px;
+  width: 16px; height: 106%; z-index: 8;
+  background: linear-gradient(to bottom, #9B2840 0%, #6a1528 50%, #4a0e1a 100%);
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.5), -1px 0 3px rgba(0,0,0,0.3);
+  clip-path: polygon(0 0, 100% 0, 100% 93%, 50% 100%, 0 93%);
+  opacity: 0.9;
+}
+
+/* ---- WHEEL (SVG Premium) ---- */
+.wheel-stage {
+  position: relative; width: 380px; height: 380px; margin: 0 auto;
+  filter: drop-shadow(0 30px 50px rgba(0,0,0,0.7));
+}
+.wheel-pointer-wrap {
+  position: absolute; top: -18px; left: 50%; transform: translateX(-50%); z-index: 30;
+  display: flex; flex-direction: column; align-items: center;
+}
+.wheel-pointer-gem {
+  width: 28px; height: 36px;
+  background: linear-gradient(to bottom, var(--gold-light), var(--gold-dark));
+  clip-path: polygon(50% 100%, 0 0, 100% 0);
+  box-shadow: 0 4px 12px rgba(212,175,55,0.6);
+}
+.wheel-svg-wrap {
+  width: 100%; height: 100%; position: relative;
+  transition: transform 5.5s cubic-bezier(0.02, 0.85, 0.08, 1);
+}
+.wheel-svg-wrap svg { width: 100%; height: 100%; }
+.wheel-center {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 72px; height: 72px; border-radius: 50%; z-index: 25;
+  background: radial-gradient(circle at 35% 35%, #3a2a10, #0a0600);
+  border: 3px solid var(--gold);
+  box-shadow: 0 0 20px rgba(212,175,55,0.4), inset 0 2px 8px rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+}
+.wheel-center-icon {
+  font-family: 'Cinzel', serif; font-size: 1.2rem; color: var(--gold);
+  text-shadow: 0 0 10px rgba(212,175,55,0.6);
+}
+.wheel-outer-ring {
+  position: absolute; inset: -6px; border-radius: 50%;
+  border: 3px solid rgba(212,175,55,0.5);
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.4), 0 0 30px rgba(212,175,55,0.15);
+  pointer-events: none;
+}
+.wheel-inner-ring {
+  position: absolute; inset: 4px; border-radius: 50%;
+  border: 1px solid rgba(212,175,55,0.2);
+  pointer-events: none;
+}
+.wheel-notch {
+  position: absolute; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--gold); box-shadow: 0 0 6px rgba(212,175,55,0.5);
+  top: -4px; left: 50%; transform: translateX(-50%); transform-origin: 4px 194px;
+}
+
+/* ---- NAVIGATION FOOTER ---- */
+nav.bottom-nav {
+  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+  z-index: 150; display: flex; align-items: center; gap: 20px;
+  background: rgba(6,4,4,0.85); backdrop-filter: blur(20px);
+  border: 1px solid rgba(212,175,55,0.2); border-radius: 99px;
+  padding: 0.5rem 0.75rem;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,0,0,0.4);
+}
+.nav-btn {
+  display: flex; align-items: center; gap: 0.4rem;
+  font-family: 'Cinzel', serif; font-size: 0.65rem; font-weight: 600;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: rgba(212,175,55,0.5); background: none; border: none; cursor: pointer;
+  padding: 0.4rem 0.75rem; border-radius: 99px; transition: all 0.3s;
+}
+.nav-btn:hover { color: var(--gold); background: rgba(212,175,55,0.06); }
+.nav-btn:disabled { opacity: 0.2; cursor: default; pointer-events: none; }
+.nav-counter {
+  font-family: 'Cinzel', serif; font-size: 0.65rem; font-weight: 600;
+  color: rgba(212,175,55,0.4); letter-spacing: 0.2em; padding: 0 0.5rem;
+  border-left: 1px solid rgba(212,175,55,0.15); border-right: 1px solid rgba(212,175,55,0.15);
+}
+.nav-counter span { color: var(--gold); font-size: 1rem; }
+.nav-next-main {
+  background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
+  color: #0a0800; border: none; cursor: pointer;
+  font-family: 'Cinzel', serif; font-size: 0.75rem; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  padding: 0.7rem 1.8rem; border-radius: 99px;
+  box-shadow: 0 6px 20px rgba(212,175,55,0.3);
+  display: flex; align-items: center; gap: 0.5rem;
+  transition: all 0.3s;
+}
+.nav-next-main:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(212,175,55,0.45); }
+
+/* ---- VOCAB WORD (TOOLTIP) ---- */
+.vocab-word {
+  color: var(--gold); border-bottom: 1px dashed rgba(212,175,55,0.4);
+  cursor: help; position: relative; display: inline-block;
+  transition: color 0.2s;
+}
+.vocab-word:hover { color: var(--gold-light); border-bottom-style: solid; }
+.vocab-tooltip {
+  position: absolute; bottom: calc(100% + 12px); left: 50%; transform: translateX(-50%);
+  width: 220px; background: rgba(8,5,5,0.97); border: 1px solid rgba(212,175,55,0.3);
+  border-radius: 12px; padding: 1rem; pointer-events: none;
+  opacity: 0; visibility: hidden; transition: all 0.3s;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+  z-index: 100;
+}
+.vocab-word:hover .vocab-tooltip { opacity: 1; visibility: visible; }
+.tooltip-label { font-family: 'Cinzel', serif; font-size: 0.6rem; color: var(--gold); letter-spacing: 0.2em; margin-bottom: 0.4rem; }
+.tooltip-body  { font-size: 0.8rem; color: #a09080; line-height: 1.5; }
+
+/* ---- FORMULA EXPLORER ---- */
+.formula-block {
+  font-family: 'Cinzel', serif; font-size: 1.6rem; font-weight: 600;
+  padding: 1.2rem 2rem; border-radius: 12px; cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03);
+  color: #e0d5c0; transition: all 0.3s; letter-spacing: 0.1em;
+}
+.formula-block:hover { border-color: rgba(212,175,55,0.5); color: var(--gold); background: rgba(212,175,55,0.06); transform: translateY(-4px); }
+.formula-block.active { border-color: var(--gold); color: var(--gold); background: rgba(212,175,55,0.1); }
+.formula-reveal {
+  opacity: 0; max-height: 0; overflow: hidden;
+  transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  background: rgba(6,4,4,0.8); border: 1px solid rgba(212,175,55,0.15); border-radius: 16px;
+}
+.formula-reveal.open { opacity: 1; max-height: 200px; padding: 1.5rem 2rem; margin-top: 1.5rem; }
+
+/* ---- ERROR GAME ---- */
+.error-word {
+  display: inline-block; cursor: pointer; border-bottom: 2px dashed rgba(114,47,55,0.5);
+  color: #e0d5c0; transition: all 0.2s; padding: 0 2px;
+}
+.error-word:hover { color: white; border-bottom-color: var(--burg-light); }
+.error-word.found  { color: var(--burg-light); border-bottom-color: var(--burg-light); font-weight: 700; }
+.error-word.wrong  { color: rgba(212,175,55,0.7); border-bottom-color: transparent; }
+
+/* ---- SORT CARD ---- */
+.sort-chip {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: 0.95rem; padding: 0.75rem 1.25rem; border-radius: 10px; cursor: grab;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+  transition: all 0.25s; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+.sort-chip:active { cursor: grabbing; }
+
+/* ---- COMPREHENSION OPTION ---- */
+.comp-btn {
+  width: 100%; text-align: left; padding: 1.25rem 1.75rem; border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03);
+  color: #c8beb0; font-size: 1rem; cursor: pointer; transition: all 0.3s;
+  font-family: 'Inter', sans-serif;
+}
+.comp-btn:hover { border-color: rgba(212,175,55,0.3); background: rgba(212,175,55,0.04); }
+.comp-btn.correct { border-color: rgba(212,175,55,0.5); background: rgba(212,175,55,0.08); color: var(--gold); }
+.comp-btn.wrong   { border-color: rgba(114,47,55,0.5); background: rgba(114,47,55,0.08); color: var(--burg-light); }
+
+/* ---- JOURNAL PANEL ---- */
+#journal {
+  position: fixed; top: 0; right: -520px; width: 480px; height: 100vh;
+  background: rgba(6,4,4,0.97); backdrop-filter: blur(30px);
+  border-left: 1px solid rgba(212,175,55,0.2); z-index: 300;
+  display: flex; flex-direction: column; padding: 2rem;
+  transition: right 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: -30px 0 80px rgba(0,0,0,0.8);
+}
+#journal.open { right: 0; }
+.journal-textarea {
+  width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(212,175,55,0.15);
+  border-radius: 12px; padding: 1rem; color: #c8beb0; resize: none; height: 150px;
+  font-family: 'Playfair Display', serif; font-style: italic; font-size: 1rem; line-height: 1.7;
+  transition: border-color 0.3s;
+}
+.journal-textarea:focus { outline: none; border-color: rgba(212,175,55,0.4); }
+
+/* ---- ANIMATIONS ---- */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60%  { transform: translateX(-6px); }
+  40%, 80%  { transform: translateX(6px); }
+}
+.shake { animation: shake 0.4s ease; }
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(212,175,55,0.1), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite;
+}
+
+/* ---- MISC ---- */
+.pill {
+  display: inline-block; font-family: 'Cinzel', serif; font-size: 0.6rem; font-weight: 600;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  padding: 3px 12px; border-radius: 99px; border: 1px solid currentColor;
+}
+</style>
+</head>
+<body>
+
+<!-- BACKGROUND -->
+<div class="bg-canvas">
+  <div class="bg-cross-grid"></div>
+  <div class="bg-vignette"></div>
+  <!-- Floating Particles JS generated -->
+</div>
+
+<div class="gold-frame"></div>
+
+<!-- HEADER -->
+<header>
+  <div style="display:flex;align-items:center;">
+    <span class="logo">WOLFAITH</span>
+    <span class="logo-badge">B2 Premium</span>
+  </div>
+  <button class="btn-journal" onclick="toggleJournal()">
+    <i data-lucide="feather" style="width:14px;height:14px;"></i>
+    Journal
+  </button>
+</header>
+
+<!-- LESSON SLIDES -->
+<main id="lesson">
+
+  <!-- ① COVER -->
+  <section class="slide active" id="s1">
+    <div style="position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=1600') center/cover no-repeat;opacity:0.15;"></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(to top, #080808 30%, transparent 100%);"></div>
+    <div style="position:relative;z-index:5;text-align:center;max-width:900px;">
+      <div class="section-label" style="margin-bottom:2rem;">WOLFAITH ACADEMY · EPISODE I</div>
+      <h1 class="t-display" style="font-size:clamp(4rem,10vw,9rem);color:#fff;line-height:0.9;margin-bottom:0.5rem;">The<br>Chosen</h1>
+      <div class="section-divider" style="width:80px;margin:1.5rem auto;"></div>
+      <p class="t-title" style="font-size:clamp(1.2rem,3vw,2.5rem);color:var(--gold);letter-spacing:0.5em;margin-bottom:3rem;">BETHESDA</p>
+      <button class="btn btn-primary" onclick="nextSlide()">
+        Begin Lesson <i data-lucide="chevron-right" style="width:16px;height:16px;"></i>
+      </button>
+    </div>
+  </section>
+
+  <!-- ② TEACHER BRIEFING -->
+  <section class="slide" id="s2">
+    <div class="card card-glow" style="max-width:780px;width:100%;padding:3.5rem;">
+      <div class="section-label text-center">Lesson Overview</div>
+      <div class="section-divider"></div>
+      <h2 class="t-title" style="font-size:1.8rem;color:#fff;text-align:center;margin:1rem 0 2.5rem;">Teacher's Briefing</h2>
+      <p class="t-body" style="color:#a09080;text-align:center;line-height:1.8;margin-bottom:2.5rem;font-size:1.05rem;">
+        Welcome. Today we explore John 5 through the lens of the human tendency to answer God's invitation with our <em style="color:var(--gold);">limitations</em> instead of our <em style="color:var(--gold);">faith</em>.
+      </p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">
+        <div style="background:rgba(212,175,55,0.05);border:1px solid rgba(212,175,55,0.1);border-radius:14px;padding:1.5rem;text-align:center;">
+          <i data-lucide="scroll" style="width:28px;height:28px;color:var(--gold);margin:0 auto 1rem;display:block;"></i>
+          <p class="t-title" style="font-size:0.65rem;color:var(--gold);letter-spacing:0.2em;margin-bottom:0.4rem;">EXEGESIS</p>
+          <p style="font-size:0.82rem;color:#806860;">John 5:5–8 · The Healing at Bethesda</p>
+        </div>
+        <div style="background:rgba(212,175,55,0.05);border:1px solid rgba(212,175,55,0.1);border-radius:14px;padding:1.5rem;text-align:center;">
+          <i data-lucide="languages" style="width:28px;height:28px;color:var(--gold);margin:0 auto 1rem;display:block;"></i>
+          <p class="t-title" style="font-size:0.65rem;color:var(--gold);letter-spacing:0.2em;margin-bottom:0.4rem;">GRAMMAR</p>
+          <p style="font-size:0.82rem;color:#806860;">Past Perfect Continuous · CEFR B2</p>
+        </div>
+        <div style="background:rgba(212,175,55,0.05);border:1px solid rgba(212,175,55,0.1);border-radius:14px;padding:1.5rem;text-align:center;">
+          <i data-lucide="mic" style="width:28px;height:28px;color:var(--gold);margin:0 auto 1rem;display:block;"></i>
+          <p class="t-title" style="font-size:0.65rem;color:var(--gold);letter-spacing:0.2em;margin-bottom:0.4rem;">SPEAKING</p>
+          <p style="font-size:0.82rem;color:#806860;">Excuses vs. Responsibility · Abstract Reasoning</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ③ WARM-UP 1 -->
+  <section class="slide" id="s3">
+    <div class="card" style="max-width:780px;width:100%;padding:3.5rem;text-align:center;">
+      <div class="section-label">Warm-Up · Opinion Scale</div>
+      <div class="section-divider"></div>
+      <p class="t-quote" style="font-size:clamp(1.4rem,3vw,2.2rem);color:#fff;line-height:1.5;margin:1.5rem 0 2.5rem;">
+        "Waiting builds character more than<br>immediate success does."
+      </p>
+      <div style="display:flex;flex-wrap:wrap;gap:0.75rem;justify-content:center;margin-bottom:1.5rem;" id="wu1-opts">
+        <button class="opinion-btn" onclick="selectOpinion(this,'wu1-prompt')">Strongly Disagree</button>
+        <button class="opinion-btn" onclick="selectOpinion(this,'wu1-prompt')">Disagree</button>
+        <button class="opinion-btn" onclick="selectOpinion(this,'wu1-prompt')">Neutral</button>
+        <button class="opinion-btn" onclick="selectOpinion(this,'wu1-prompt')">Agree</button>
+        <button class="opinion-btn" onclick="selectOpinion(this,'wu1-prompt')">Strongly Agree</button>
+      </div>
+      <div class="prompt-box" id="wu1-prompt">
+        <div class="prompt-label"><i data-lucide="mic" style="width:11px;height:11px;"></i> Teacher Prompt</div>
+        <p class="prompt-text">"Interesting. Can you elaborate? What was the longest period you had been waiting for something — and what did that season do to your faith?"</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ④ WARM-UP 2 -->
+  <section class="slide" id="s4">
+    <div class="card" style="max-width:780px;width:100%;padding:3.5rem;text-align:center;">
+      <div class="section-label">Warm-Up · Opinion Scale</div>
+      <div class="section-divider"></div>
+      <p class="t-quote" style="font-size:clamp(1.4rem,3vw,2.2rem);color:#fff;line-height:1.5;margin:1.5rem 0 2.5rem;">
+        "Most people who fail have a<br>perfectly logical excuse for it."
+      </p>
+      <div style="display:flex;flex-wrap:wrap;gap:0.75rem;justify-content:center;margin-bottom:1.5rem;" id="wu2-opts">
+        <button class="opinion-btn" onclick="selectOpinion(this,'wu2-prompt')">Strongly Disagree</button>
+        <button class="opinion-btn" onclick="selectOpinion(this,'wu2-prompt')">Disagree</button>
+        <button class="opinion-btn" onclick="selectOpinion(this,'wu2-prompt')">Neutral</button>
+        <button class="opinion-btn" onclick="selectOpinion(this,'wu2-prompt')">Agree</button>
+        <button class="opinion-btn" onclick="selectOpinion(this,'wu2-prompt')">Strongly Agree</button>
+      </div>
+      <div class="prompt-box" id="wu2-prompt">
+        <div class="prompt-label"><i data-lucide="mic" style="width:11px;height:11px;"></i> Teacher Prompt</div>
+        <p class="prompt-text">"When things go wrong, do you naturally look for solutions — or do you first reach for a perfectly logical excuse? Be vulnerable."</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑤ WORD WALL: VOCAB -->
+  <section class="slide" id="s5">
+    <div style="max-width:860px;width:100%;">
+      <div style="text-align:center;margin-bottom:2rem;">
+        <div class="section-label">Word Wall · Vocabulary</div>
+        <div class="section-divider"></div>
+        <h2 class="t-title" style="font-size:1.6rem;color:#fff;margin-top:0.5rem;">Match Word to Definition</h2>
+        <p class="t-body" style="color:#80706a;font-size:0.9rem;margin-top:0.5rem;">Drag each word to its correct definition below.</p>
+      </div>
+      <!-- Word Bank -->
+      <div style="display:flex;flex-wrap:wrap;gap:0.75rem;justify-content:center;margin-bottom:1.75rem;" id="vocab-bank" ondragover="allowDrop(event)" ondrop="drop(event)">
+        <div class="word-chip" draggable="true" ondragstart="drag(event)" id="v1">Invalid</div>
+        <div class="word-chip" draggable="true" ondragstart="drag(event)" id="v2">Porticoes</div>
+        <div class="word-chip" draggable="true" ondragstart="drag(event)" id="v3">Stirred</div>
+        <div class="word-chip" draggable="true" ondragstart="drag(event)" id="v4">Pool</div>
+      </div>
+      <!-- Definition Grid -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="card" style="padding:1.25rem 1.5rem;">
+          <p style="font-size:0.85rem;color:#906860;margin-bottom:0.75rem;line-height:1.5;">A person made weak or disabled by illness or injury.</p>
+          <div class="drop-zone" id="def1" ondragover="allowDrop(event)" ondrop="dropVocab(event,'v1')"></div>
+        </div>
+        <div class="card" style="padding:1.25rem 1.5rem;">
+          <p style="font-size:0.85rem;color:#906860;margin-bottom:0.75rem;line-height:1.5;">A structure consisting of a roof supported by columns — a covered porch.</p>
+          <div class="drop-zone" id="def2" ondragover="allowDrop(event)" ondrop="dropVocab(event,'v2')"></div>
+        </div>
+        <div class="card" style="padding:1.25rem 1.5rem;">
+          <p style="font-size:0.85rem;color:#906860;margin-bottom:0.75rem;line-height:1.5;">Moved, agitated, or mixed gently — referring to still water.</p>
+          <div class="drop-zone" id="def3" ondragover="allowDrop(event)" ondrop="dropVocab(event,'v3')"></div>
+        </div>
+        <div class="card" style="padding:1.25rem 1.5rem;">
+          <p style="font-size:0.85rem;color:#906860;margin-bottom:0.75rem;line-height:1.5;">A small, enclosed body of still water; a reservoir or cistern.</p>
+          <div class="drop-zone" id="def4" ondragover="allowDrop(event)" ondrop="dropVocab(event,'v4')"></div>
+        </div>
+      </div>
+      <div class="prompt-box" id="vocab-prompt" style="margin-top:1rem;">
+        <div class="prompt-label"><i data-lucide="mic" style="width:11px;height:11px;"></i> Teacher Prompt</div>
+        <p class="prompt-text">"Excellent. Now — have you ever felt emotionally 'invalid'? What stirred your waters and helped you move again?"</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑥ ETYMOLOGY -->
+  <section class="slide" id="s6">
+    <div class="card card-glow" style="max-width:800px;width:100%;padding:3.5rem;">
+      <div class="section-label text-center">Greek Root · Etymology</div>
+      <div class="section-divider"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;margin-top:1.5rem;">
+        <div style="text-align:center;cursor:pointer;" onclick="openPrompt('etym-prompt')">
+          <div style="background:rgba(212,175,55,0.06);border:1px solid rgba(212,175,55,0.2);border-radius:16px;padding:2.5rem 1.5rem;transition:all 0.3s;" onmouseover="this.style.background='rgba(212,175,55,0.1)'" onmouseout="this.style.background='rgba(212,175,55,0.06)'">
+            <p class="t-display" style="font-size:3.5rem;color:#fff;margin-bottom:0.5rem;">Astheneia</p>
+            <p style="font-family:'Cinzel',serif;font-size:1.4rem;color:rgba(212,175,55,0.6);letter-spacing:0.15em;">ἀσθένεια</p>
+            <p style="font-size:0.7rem;color:#605050;margin-top:1rem;letter-spacing:0.15em;text-transform:uppercase;">Click to analyze</p>
+          </div>
+        </div>
+        <div style="border-left:2px solid rgba(212,175,55,0.15);padding-left:2rem;">
+          <p class="t-title" style="font-size:0.65rem;color:var(--gold);letter-spacing:0.25em;margin-bottom:1rem;">LITERAL MEANING</p>
+          <p class="t-quote" style="font-size:1.5rem;color:#fff;margin-bottom:1rem;">"Without strength.<br>Powerless."</p>
+          <p style="color:#706460;line-height:1.75;font-size:0.9rem;">A complete inability to change one's own condition without divine intervention. The man's body was not the only thing that was weak.</p>
+        </div>
+      </div>
+      <div class="prompt-box" id="etym-prompt">
+        <div class="prompt-label"><i data-lucide="mic" style="width:11px;height:11px;"></i> Teacher Prompt</div>
+        <p class="prompt-text">"When was a moment in your life you felt true <em>Astheneia</em> — completely out of strength — and needed God to act where you could not?"</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑦ SCHOLAR'S DESK -->
+  <section class="slide" id="s7">
+    <div style="max-width:860px;width:100%;text-align:center;">
+      <div class="section-label">Context Explorer · Scholar's Desk</div>
+      <div class="section-divider"></div>
+      <div class="card" style="padding:3rem;margin-top:1rem;">
+        <p class="t-quote" style="font-size:clamp(1.2rem,2.5vw,1.75rem);color:#d0c4b0;line-height:2;">
+          "Now there is in Jerusalem near the Sheep Gate a
+          <span class="vocab-word">pool<div class="vocab-tooltip"><div class="tooltip-label">Bethesda</div><div class="tooltip-body">Meaning "House of Mercy" — a place where the desperate and the desperate-hearted gathered in hope.</div></div></span>... 
+          Here a great number of disabled people used to lie—the blind, the lame, the paralyzed. One who was there had been an invalid for 
+          <span class="vocab-word" onclick="openPrompt('desk-prompt')">thirty-eight years<div class="vocab-tooltip"><div class="tooltip-label">38 Years</div><div class="tooltip-body">Scholars link this to the 38 years Israel wandered in the wilderness (Deut 2:14) — a generation lost in waiting.</div></div></span>."
+        </p>
+        <div class="animate-shimmer" style="height:1px;border-radius:1px;margin:2rem 0;"></div>
+        <p style="font-size:0.8rem;color:#504840;font-family:'Cinzel',serif;letter-spacing:0.2em;">HOVER THE GOLDEN WORDS · CLICK TO OPEN DISCUSSION</p>
+      </div>
+      <div class="prompt-box" id="desk-prompt" style="margin-top:1.25rem;text-align:left;">
+        <div class="prompt-label"><i data-lucide="mic" style="width:11px;height:11px;"></i> Teacher Prompt</div>
+        <p class="prompt-text">"Can you imagine 38 years of waiting? How would your faith survive two years? Five? How does time change the way we pray?"</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑧ PRE-VIDEO -->
+  <section class="slide" id="s8">
+    <div class="card" style="max-width:720px;width:100%;padding:3.5rem;text-align:center;">
+      <i data-lucide="clapperboard" style="width:48px;height:48px;color:var(--gold);margin:0 auto 1.5rem;display:block;opacity:0.8;"></i>
+      <div class="section-label">Video Analysis · Part 1 of 2</div>
+      <div class="section-divider"></div>
+      <h2 class="t-title" style="font-size:1.6rem;color:#fff;margin:1rem 0 2rem;">The Approach</h2>
+      <div style="background:rgba(212,175,55,0.05);border:1px solid rgba(212,175,55,0.15);border-radius:16px;padding:2rem;text-align:left;">
+        <p class="t-title" style="font-size:0.65rem;color:var(--gold);letter-spacing:0.25em;margin-bottom:1.25rem;display:flex;align-items:center;gap:0.5rem;"><i data-lucide="ear" style="width:14px;height:14px;"></i> ACTIVE LISTENING GUIDE</p>
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <div style="display:flex;gap:1rem;align-items:flex-start;">
+            <span style="background:var(--gold);color:#080808;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:0.7rem;font-weight:700;flex-shrink:0;">1</span>
+            <p class="t-quote" style="font-size:1.05rem;color:#c0b0a0;">Does the man answer Jesus with a simple "Yes"?</p>
+          </div>
+          <div style="display:flex;gap:1rem;align-items:flex-start;">
+            <span style="background:var(--gold);color:#080808;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:0.7rem;font-weight:700;flex-shrink:0;">2</span>
+            <p class="t-quote" style="font-size:1.05rem;color:#c0b0a0;">What does he focus on in his first words?</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑨ VIDEO 1 -->
+  <section class="slide" id="s9">
+    <div style="max-width:900px;width:100%;">
+      <div style="text-align:center;margin-bottom:1.5rem;">
+        <h2 class="t-title" style="font-size:1.5rem;color:#fff;">The Approach</h2>
+        <p style="color:var(--gold);font-size:0.7rem;letter-spacing:0.2em;font-family:'Cinzel',serif;margin-top:0.4rem;">JOHN 5 · THE CHOSEN</p>
+      </div>
+      <div style="position:relative;aspect-ratio:16/9;border-radius:20px;overflow:hidden;border:1px solid rgba(212,175,55,0.2);box-shadow:0 40px 80px rgba(0,0,0,0.8);">
+        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/JMj1ggINLe4?start=17&end=100&rel=0&modestbranding=1" frameborder="0" allowfullscreen style="position:absolute;inset:0;"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑩ COMPREHENSION CHECK -->
+  <section class="slide" id="s10">
+    <div class="card" style="max-width:680px;width:100%;padding:3.5rem;">
+      <div class="section-label text-center">Comprehension Check</div>
+      <div class="section-divider"></div>
+      <h2 class="t-quote" style="font-size:1.9rem;color:#fff;text-align:center;margin:1.5rem 0 2rem;line-height:1.4;">Does the man say "yes" to Jesus?</h2>
+      <div style="display:flex;flex-direction:column;gap:0.75rem;">
+        <button class="comp-btn" onclick="this.classList.add('wrong');this.style.pointerEvents='none'">
+          <strong style="color:inherit;">A.</strong> Yes — he immediately says "I want to be healed."
+        </button>
+        <button class="comp-btn" onclick="this.classList.add('correct');this.style.pointerEvents='none';openPrompt('obs-prompt')">
+          <strong style="color:inherit;">B.</strong> No — he begins explaining why healing hasn't happened yet.
+        </button>
+      </div>
+      <div class="prompt-box" id="obs-prompt">
+        <div class="prompt-label"><i data-lucide="mic" style="width:11px;height:11px;"></i> Teacher Prompt</div>
+        <p class="prompt-text">"Exactly. He never says yes. Why do you think his first instinct was to explain his circumstance instead of express his desire?"</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑪ BLACKBOARD REVEAL -->
+  <section class="slide" id="s11">
+    <div style="max-width:780px;width:100%;text-align:center;cursor:pointer;" onclick="document.getElementById('bbtext').style.filter='none';document.getElementById('bbtext').style.opacity='1';document.getElementById('bb-hint').style.opacity='0'">
+      <div class="section-label">The Revelation</div>
+      <div class="section-divider"></div>
+      <div class="card" style="padding:4rem;margin-top:1rem;position:relative;overflow:hidden;">
+        <div class="animate-shimmer" style="position:absolute;inset:0;"></div>
+        <p id="bb-hint" style="font-size:0.7rem;color:#504840;letter-spacing:0.2em;font-family:'Cinzel',serif;margin-bottom:2rem;transition:opacity 0.5s;">TAP TO REVEAL THE TRUTH</p>
+        <p id="bbtext" class="t-display" style="font-size:clamp(1.5rem,3.5vw,2.8rem);color:#fff;line-height:1.4;filter:blur(12px);opacity:0.3;transition:all 1.2s cubic-bezier(0.22,1,0.36,1);">
+          "He answers the Savior with his <span style="color:var(--burg-light);">limitations</span>,<br>not with his <span style="color:var(--gold);">faith</span>."
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑫ BIBLE: JOHN 5:5-6 -->
+  <section class="slide" id="s12">
+    <div style="width:100%;text-align:center;">
+      <div class="section-label">Sacred Scripture · John 5:5–6</div>
+      <div class="section-divider"></div>
+      <p style="color:#605850;font-size:0.82rem;margin-bottom:2rem;">Click the Bible to open it.</p>
+      <div class="bible-scene" style="height:500px;" onclick="openBible(this)">
+        <div class="bible-book" id="bible1">
+          <!-- Base Right Page -->
+          <div class="bible-page-r">
+            <div class="bible-ribbon"></div>
+            <div class="bible-verse-num">6</div>
+            <div class="bible-verse-label">John · Chapter 5 · Verse 6</div>
+            <p class="bible-verse-text">"When Jesus saw him lying there and learned that he had been in this condition for a long time, he asked him,</p>
+            <p class="bible-verse-text" style="font-size:1.2rem;font-weight:700;color:#1a0a08;margin-top:1rem;">'Do you want to get well?'</p>
+          </div>
+          
+          <!-- 3D Edges and Spine -->
+          <div class="bible-edge bible-edge-right"></div>
+          <div class="bible-edge bible-edge-top"></div>
+          <div class="bible-edge bible-edge-bottom"></div>
+          <div class="bible-spine"></div>
+          
+          <!-- Flipping Front Half -->
+          <div class="bible-flip">
+            <!-- Front Cover -->
+            <div class="bible-cover">
+              <div class="bible-cover-corner tl"></div>
+              <div class="bible-cover-corner tr"></div>
+              <div class="bible-cover-corner bl"></div>
+              <div class="bible-cover-corner br"></div>
+              <div class="bible-cover-cross"></div>
+              <p class="bible-cover-title">HOLY BIBLE</p>
+              <div class="bible-cover-line"></div>
+              <p class="bible-cover-subtitle">New International Version</p>
+            </div>
+            <!-- Inside Left Page -->
+            <div class="bible-page-l">
+              <div class="bible-verse-num">5</div>
+              <div class="bible-verse-label">John · Chapter 5 · Verse 5</div>
+              <p class="bible-verse-text">"One who was there had been an invalid for thirty-eight years."</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="prompt-box" id="b1-prompt" style="max-width:640px;margin:0 auto;text-align:left;">
+        <div class="prompt-label"><i data-lucide="mic" style="width:11px;height:11px;"></i> Theological Reflection</div>
+        <p class="prompt-text">"Jesus <em>sees</em> him, <em>learns</em> his story, and then <em>asks</em>. What does this sequence reveal about the nature of God's attention? Does He ever act without first truly seeing us?"</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑬ UNJUMBLE THE TRUTH -->
+  <section class="slide" id="s13">
+    <div class="card" style="max-width:780px;width:100%;padding:3.5rem;text-align:center;">
+      <div class="section-label">Word Wall · Unjumble the Truth</div>
+      <div class="section-divider"></div>
+      <p class="t-quote" style="font-size:1.6rem;color:#fff;line-height:1.5;margin:1.5rem 0;">
+        Why did Jesus ask "Do you want<br>to be healed?" Isn't it obvious?
+      </p>
+      <p style="color:#706060;font-size:0.82rem;margin-bottom:1.5rem;">Arrange the fragments to construct the theological answer:</p>
+      <!-- Word Bank -->
+      <div style="display:flex;flex-wrap:wrap;gap:0.75rem;justify-content:center;margin-bottom:1.5rem;" id="jumble-bank" ondragover="allowDrop(event)" ondrop="drop(event)">
+        <div class="word-chip" draggable="true" ondragstart="drag(event)" id="j1">our identity.</div>
+        <div class="word-chip" draggable="true" ondragstart="drag(event)" id="j2">Sometimes</div>
+        <div class="word-chip" draggable="true" ondragstart="drag(event)" id="j3">suffering becomes</div>
+      </div>
+      <!-- Drop Zone -->
+      <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(212,175,55,0.12);border-radius:16px;padding:1.5rem;min-height:90px;" id="jumble-drop" ondragover="allowDrop(event)" ondrop="drop(event)">
+        <div class="drop-zone" style="background:transparent;border:none;min-height:40px;"></div>
+      </div>
+      <button class="btn btn-primary" style="margin-top:1.5rem;" onclick="checkJumble()">Verify Theology</button>
+      <div class="prompt-box" id="jumble-prompt">
+        <div class="prompt-label"><i data-lucide="mic" style="width:11px;height:11px;"></i> Teacher Prompt</div>
+        <p class="prompt-text">"Exactly. Sometimes suffering becomes our identity. We fear the vacuum of healing — 'Who am I if I am no longer the one who suffers?' Can you relate to this?"</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑭ SCRIPT ANALYSIS -->
+  <section class="slide" id="s14">
+    <div style="max-width:900px;width:100%;">
+      <div style="text-align:center;margin-bottom:2rem;">
+        <div class="section-label">Linguistic Analysis · The Excuse</div>
+        <div class="section-divider"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:center;">
+        <div style="border-left:3px solid var(--burg-light);padding:2rem 2rem;">
+          <p class="pill" style="color:var(--burg-light);margin-bottom:1.25rem;">The Lame Man · John 5:7</p>
+          <p class="t-quote" style="font-size:1.5rem;color:#fff;line-height:1.6;">"Sir, I have <span style="color:var(--burg-light);">no one</span> to help me into the pool. <span style="color:var(--burg-light);">Someone else</span> goes down ahead of me."</p>
+        </div>
+        <div class="card" style="padding:2rem;">
+          <p class="t-title" style="font-size:0.65rem;color:var(--gold);letter-spacing:0.25em;margin-bottom:1.25rem;">LINGUISTIC FOCUS</p>
+          <div style="display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1.5rem;">
+            <div style="background:rgba(114,47,55,0.1);border-left:3px solid var(--burg-light);border-radius:0 8px 8px 0;padding:0.75rem 1rem;">
+              <p style="font-size:0.75rem;color:var(--burg-light);font-weight:600;">"No one" → Absence of support</p>
+            </div>
+            <div style="background:rgba(114,47,55,0.1);border-left:3px solid var(--burg-light);border-radius:0 8px 8px 0;padding:0.75rem 1rem;">
+              <p style="font-size:0.75rem;color:var(--burg-light);font-weight:600;">"Someone else" → External blame</p>
+            </div>
+            <div style="background:rgba(114,47,55,0.1);border-left:3px solid var(--burg-light);border-radius:0 8px 8px 0;padding:0.75rem 1rem;">
+              <p style="font-size:0.75rem;color:var(--burg-light);font-weight:600;">Zero mention of his own desire</p>
+            </div>
+          </div>
+          <button class="btn btn-outline" style="width:100%;justify-content:center;" onclick="openPrompt('analysis-prompt')">Open Discussion</button>
+        </div>
+      </div>
+      <div class="prompt-box" id="analysis-prompt" style="margin-top:1rem;">
+        <div class="prompt-label"><i data-lucide="mic" style="width:11px;height:11px;"></i> Teacher Prompt</div>
+        <p class="prompt-text">"He never says 'I want to.' He only speaks of what is missing. When God asks you to move — do you lead with your desire, or with your deficit?"</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑮ GRAMMAR TIMELINE -->
+  <section class="slide" id="s15">
+    <div style="max-width:860px;width:100%;">
+      <div style="text-align:center;margin-bottom:2rem;">
+        <div class="section-label">Grammar · B2 Level</div>
+        <div class="section-divider"></div>
+        <h2 class="t-title" style="font-size:1.8rem;color:#fff;margin-top:0.5rem;">Past Perfect Continuous</h2>
+        <p class="t-body" style="color:#706060;margin-top:0.5rem;">Visualizing duration in the past.</p>
+      </div>
+      <div class="card" style="padding:3rem;">
+        <p class="t-quote" style="font-size:1.6rem;color:#c0b0a0;text-align:center;margin-bottom:3rem;line-height:1.5;">
+          "He <strong style="color:var(--gold);">had been lying</strong> there for 38 years when Jesus <strong style="color:#fff;text-decoration:underline;text-decoration-color:rgba(255,255,255,0.2);">arrived</strong>."
+        </p>
+        <div style="position:relative;height:100px;">
+          <div class="tl-line"></div>
+          <div class="tl-progress" id="tl-prog" style="left:12%;"></div>
+          <div style="position:absolute;top:50%;left:12%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:10px;">
+            <p style="font-size:0.65rem;color:#605050;font-family:'Cinzel',serif;letter-spacing:0.15em;white-space:nowrap;">38 Years Earlier</p>
+            <div class="tl-dot" id="tl-dot1"></div>
+          </div>
+          <div style="position:absolute;top:50%;left:72%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:10px;" id="tl-end">
+            <p style="font-size:0.65rem;color:#c0b0a0;font-family:'Cinzel',serif;letter-spacing:0.15em;white-space:nowrap;">Jesus Arrives</p>
+            <div class="tl-dot" id="tl-dot2"></div>
+          </div>
+        </div>
+        <div style="text-align:center;margin-top:2rem;">
+          <button class="btn btn-primary" onclick="animateTimeline()">Visualize Duration</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑯ GRAMMAR EXPLORER -->
+  <section class="slide" id="s16">
+    <div class="card" style="max-width:780px;width:100%;padding:3.5rem;text-align:center;">
+      <div class="section-label">Grammar Explorer · Interactive</div>
+      <div class="section-divider"></div>
+      <p class="t-body" style="color:#706060;margin-bottom:2rem;font-size:0.9rem;">Click each component to understand its grammatical purpose at B2 level.</p>
+      <div style="display:flex;align-items:center;justify-content:center;gap:1.5rem;flex-wrap:wrap;margin-bottom:0.5rem;">
+        <button class="formula-block" id="fb-had" onclick="exploreFormula('had')">HAD</button>
+        <span style="color:rgba(212,175,55,0.4);font-size:1.8rem;">+</span>
+        <button class="formula-block" id="fb-been" onclick="exploreFormula('been')">BEEN</button>
+        <span style="color:rgba(212,175,55,0.4);font-size:1.8rem;">+</span>
+        <button class="formula-block" id="fb-verb" onclick="exploreFormula('verb')" style="color:var(--gold);">VERB(ING)</button>
+      </div>
+      <div class="formula-reveal" id="formula-reveal">
+        <p class="t-title" id="formula-title" style="font-size:0.8rem;color:var(--gold);letter-spacing:0.2em;margin-bottom:0.75rem;"></p>
+        <p class="t-body" id="formula-body" style="color:#c0b0a0;line-height:1.8;font-size:1rem;"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑰ COMBINE -->
+  <section class="slide" id="s17">
+    <div style="max-width:820px;width:100%;text-align:center;">
+      <div class="section-label">Grammar · Sentence Fusion</div>
+      <div class="section-divider"></div>
+      <h2 class="t-title" style="font-size:1.6rem;color:#fff;margin:1rem 0 2rem;">Combine the Timeline</h2>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;align-items:center;margin-bottom:2rem;">
+        <div class="card" style="padding:1.5rem;text-align:left;opacity:0.7;">
+          <p style="font-size:0.65rem;color:var(--gold);font-family:'Cinzel',serif;letter-spacing:0.2em;margin-bottom:0.5rem;">EVENT 1 · DURATION</p>
+          <p class="t-quote" style="font-size:1.1rem;color:#c0b0a0;">She was praying for hours.</p>
+        </div>
+        <div style="color:rgba(212,175,55,0.3);font-family:'Cinzel',serif;font-size:1.5rem;">+</div>
+        <div class="card" style="padding:1.5rem;text-align:left;opacity:0.7;">
+          <p style="font-size:0.65rem;color:var(--gold);font-family:'Cinzel',serif;letter-spacing:0.2em;margin-bottom:0.5rem;">EVENT 2 · INTERRUPTION</p>
+          <p class="t-quote" style="font-size:1.1rem;color:#c0b0a0;">The miracle happened.</p>
+        </div>
+      </div>
+      <div style="min-height:80px;display:flex;align-items:center;justify-content:center;">
+        <button id="btn-fuse" class="btn btn-primary" onclick="fuseEvent()">Fuse Events</button>
+        <p id="fused-result" class="t-quote" style="font-size:1.6rem;color:var(--gold);display:none;line-height:1.5;">"She <strong>had been praying</strong> for hours when the miracle happened."</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑱ SYNTAX BUILDER -->
+  <section class="slide" id="s18">
+    <div class="card" style="max-width:760px;width:100%;padding:3.5rem;text-align:center;">
+      <div class="section-label">Syntax Builder · Drag & Drop</div>
+      <div class="section-divider"></div>
+      <p class="t-quote" style="font-size:1.3rem;color:#c0b0a0;margin:1rem 0 2rem;">Build the sentence: <em style="color:#fff;">"They had been waiting for years."</em></p>
+      <div style="background:rgba(0,0,0,0.4);border-radius:16px;padding:1.5rem;margin-bottom:1.5rem;border:1px solid rgba(255,255,255,0.05);">
+        <div class="drop-zone" id="dz2" ondragover="allowDrop(event)" ondrop="drop(event)" style="min-height:70px;"></div>
+      </div>
+      <div style="background:rgba(212,175,55,0.04);border:1px solid rgba(212,175,55,0.1);border-radius:16px;padding:1.25rem;margin-bottom:1.5rem;display:flex;flex-wrap:wrap;gap:0.75rem;justify-content:center;" id="bank2" ondragover="allowDrop(event)" ondrop="drop(event)">
+        <div class="word-chip" draggable="true" ondragstart="drag(event)" id="w1">waiting</div>
+        <div class="word-chip" draggable="true" ondragstart="drag(event)" id="w2">They</div>
+        <div class="word-chip" draggable="true" ondragstart="drag(event)" id="w3">years</div>
+        <div class="word-chip" draggable="true" ondragstart="drag(event)" id="w4">had</div>
+        <div class="word-chip" draggable="true" ondragstart="drag(event)" id="w5">for</div>
+        <div class="word-chip" draggable="true" ondragstart="drag(event)" id="w6">been</div>
+      </div>
+      <button class="btn btn-primary" onclick="checkSyntax2()">Verify Syntax</button>
+      <p id="sfb" style="height:24px;margin-top:1rem;font-family:'Cinzel',serif;font-size:0.8rem;letter-spacing:0.1em;transition:color 0.3s;"></p>
+    </div>
+  </section>
+
+  <!-- ⑲ ERROR DETECTION -->
+  <section class="slide" id="s19">
+    <div class="card" style="max-width:760px;width:100%;padding:3.5rem;">
+      <div style="text-align:center;margin-bottom:2rem;">
+        <div class="section-label" style="color:var(--burg-light);">Error Detection · 3 Stages</div>
+        <div class="section-divider" style="background:linear-gradient(90deg,transparent,var(--burg-light),transparent);"></div>
+        <p class="t-body" style="color:#706060;margin-top:0.75rem;font-size:0.88rem;">Click the grammatically incorrect word in each sentence.</p>
+        <p id="stage-lbl" style="font-family:'Cinzel',serif;font-size:0.7rem;color:var(--gold);letter-spacing:0.2em;margin-top:1rem;"></p>
+      </div>
+      <div id="err-game" class="t-quote" style="font-size:1.45rem;color:#d0c0b0;line-height:1.8;padding:1.5rem;background:rgba(114,47,55,0.06);border-left:3px solid rgba(114,47,55,0.4);border-radius:0 12px 12px 0;"></div>
+      <p id="err-fb" style="height:32px;margin-top:1.5rem;text-align:center;font-family:'Cinzel',serif;font-size:0.8rem;letter-spacing:0.1em;"></p>
+    </div>
+  </section>
+
+  <!-- ⑳ SPIN THE WHEEL -->
+  <section class="slide" id="s20">
+    <div style="text-align:center;">
+      <div class="section-label">Speaking Challenge · Spin the Wheel</div>
+      <div class="section-divider"></div>
+      <p class="t-body" style="color:#706060;font-size:0.88rem;margin-bottom:1.5rem;">Spin for a Past Perfect Continuous speaking prompt.</p>
+      
+      <div class="wheel-stage">
+        <!-- Outer ornamental ring -->
+        <div class="wheel-outer-ring"></div>
+        <div class="wheel-inner-ring"></div>
+        
+        <!-- Golden notches around the edge -->
+        <div class="wheel-notch" style="transform:translateX(-50%) rotate(0deg)"></div>
+        <div class="wheel-notch" style="transform:translateX(-50%) rotate(30deg)"></div>
+        <div class="wheel-notch" style="transform:translateX(-50%) rotate(60deg)"></div>
+        <div class="wheel-notch" style="transform:translateX(-50%) rotate(90deg)"></div>
+        <div class="wheel-notch" style="transform:translateX(-50%) rotate(120deg)"></div>
+        <div class="wheel-notch" style="transform:translateX(-50%) rotate(150deg)"></div>
+        <div class="wheel-notch" style="transform:translateX(-50%) rotate(180deg)"></div>
+        <div class="wheel-notch" style="transform:translateX(-50%) rotate(210deg)"></div>
+        <div class="wheel-notch" style="transform:translateX(-50%) rotate(240deg)"></div>
+        <div class="wheel-notch" style="transform:translateX(-50%) rotate(270deg)"></div>
+        <div class="wheel-notch" style="transform:translateX(-50%) rotate(300deg)"></div>
+        <div class="wheel-notch" style="transform:translateX(-50%) rotate(330deg)"></div>
+        
+        <!-- Pointer -->
+        <div class="wheel-pointer-wrap">
+          <div class="wheel-pointer-gem"></div>
+        </div>
+        
+        <!-- SVG Wheel -->
+        <div class="wheel-svg-wrap" id="wheel">
+          <svg viewBox="0 0 400 400">
+            <defs>
+              <filter id="seg-shadow"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000" flood-opacity="0.3"/></filter>
+            </defs>
+            <!-- 6 segments using path arcs (60° each) -->
+            <!-- Seg 1: TIRED (0-60°) -->
+            <path d="M200,200 L200,10 A190,190 0 0,1 364.6,105 Z" fill="#1a1008" stroke="rgba(212,175,55,0.2)" stroke-width="0.5" filter="url(#seg-shadow)"/>
+            <text transform="rotate(30,200,200)" x="200" y="70" text-anchor="middle" fill="#D4AF37" font-family="Cinzel" font-size="13" font-weight="600" letter-spacing="3">TIRED</text>
+            
+            <!-- Seg 2: HAPPY (60-120°) -->
+            <path d="M200,200 L364.6,105 A190,190 0 0,1 364.6,295 Z" fill="#120a04" stroke="rgba(212,175,55,0.2)" stroke-width="0.5" filter="url(#seg-shadow)"/>
+            <text transform="rotate(90,200,200)" x="200" y="70" text-anchor="middle" fill="#a09080" font-family="Cinzel" font-size="13" font-weight="600" letter-spacing="3">HAPPY</text>
+            
+            <!-- Seg 3: ANGRY (120-180°) -->
+            <path d="M200,200 L364.6,295 A190,190 0 0,1 200,390 Z" fill="#1a1008" stroke="rgba(212,175,55,0.2)" stroke-width="0.5" filter="url(#seg-shadow)"/>
+            <text transform="rotate(150,200,200)" x="200" y="70" text-anchor="middle" fill="#D4AF37" font-family="Cinzel" font-size="13" font-weight="600" letter-spacing="3">ANGRY</text>
+            
+            <!-- Seg 4: RELIEVED (180-240°) -->
+            <path d="M200,200 L200,390 A190,190 0 0,1 35.4,295 Z" fill="#120a04" stroke="rgba(212,175,55,0.2)" stroke-width="0.5" filter="url(#seg-shadow)"/>
+            <text transform="rotate(210,200,200)" x="200" y="70" text-anchor="middle" fill="#a09080" font-family="Cinzel" font-size="12" font-weight="600" letter-spacing="2">RELIEVED</text>
+            
+            <!-- Seg 5: WAITING (240-300°) -->
+            <path d="M200,200 L35.4,295 A190,190 0 0,1 35.4,105 Z" fill="#1a1008" stroke="rgba(212,175,55,0.2)" stroke-width="0.5" filter="url(#seg-shadow)"/>
+            <text transform="rotate(270,200,200)" x="200" y="70" text-anchor="middle" fill="#D4AF37" font-family="Cinzel" font-size="12" font-weight="600" letter-spacing="2">WAITING</text>
+            
+            <!-- Seg 6: PRAYING (300-360°) -->
+            <path d="M200,200 L35.4,105 A190,190 0 0,1 200,10 Z" fill="#120a04" stroke="rgba(212,175,55,0.2)" stroke-width="0.5" filter="url(#seg-shadow)"/>
+            <text transform="rotate(330,200,200)" x="200" y="70" text-anchor="middle" fill="#a09080" font-family="Cinzel" font-size="12" font-weight="600" letter-spacing="2">PRAYING</text>
+            
+            <!-- Inner circle stroke -->
+            <circle cx="200" cy="200" r="190" fill="none" stroke="var(--gold)" stroke-width="2.5" opacity="0.6"/>
+            <circle cx="200" cy="200" r="55" fill="none" stroke="rgba(212,175,55,0.3)" stroke-width="1"/>
+          </svg>
+        </div>
+        
+        <!-- Center Hub -->
+        <div class="wheel-center">
+          <span class="wheel-center-icon">✦</span>
+        </div>
+      </div>
+      
+      <button class="btn btn-primary" style="margin-top:2rem;" onclick="spinWheel()">
+        <i data-lucide="rotate-cw" style="width:16px;height:16px;"></i>
+        Spin the Wheel
+      </button>
+      <div class="prompt-box" id="wheel-prompt" style="max-width:600px;margin:0 auto;text-align:left;">
+        <div class="prompt-label"><i data-lucide="mic" style="width:11px;height:11px;"></i> Teacher Prompt</div>
+        <p class="prompt-text" id="wheel-q"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ㉑ SCALES OF TRUTH -->
+  <section class="slide" id="s21">
+    <div style="max-width:1000px;width:100%;">
+      <div style="text-align:center;margin-bottom:1.75rem;">
+        <div class="section-label">Word Wall · The Scales of Truth</div>
+        <div class="section-divider"></div>
+        <p class="t-body" style="color:#706060;font-size:0.88rem;margin-top:0.5rem;">Sort each phrase: Human Excuse or Divine Command?</p>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:0.75rem;justify-content:center;margin-bottom:1.5rem;" id="truth-bank" ondragover="allowDrop(event)" ondrop="drop(event)">
+        <div class="sort-chip" draggable="true" ondragstart="drag(event)" id="t1" data-type="excuse">"I have no one."</div>
+        <div class="sort-chip" draggable="true" ondragstart="drag(event)" id="t2" data-type="command">"Get up."</div>
+        <div class="sort-chip" draggable="true" ondragstart="drag(event)" id="t3" data-type="excuse">"Someone else goes first."</div>
+        <div class="sort-chip" draggable="true" ondragstart="drag(event)" id="t4" data-type="command">"Pick up your mat."</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
+        <div class="card" style="border-top:3px solid var(--burg-light);padding:1.5rem;">
+          <p class="t-title" style="font-size:0.65rem;color:var(--burg-light);letter-spacing:0.25em;text-align:center;margin-bottom:1rem;">HUMAN EXCUSES</p>
+          <div class="drop-zone" style="border-color:rgba(114,47,55,0.3);background:rgba(114,47,55,0.04);" id="zone-excuse" ondragover="allowDrop(event)" ondrop="dropSort(event,'excuse')"></div>
+        </div>
+        <div class="card" style="border-top:3px solid #10b981;padding:1.5rem;">
+          <p class="t-title" style="font-size:0.65rem;color:#10b981;letter-spacing:0.25em;text-align:center;margin-bottom:1rem;">DIVINE COMMANDS</p>
+          <div class="drop-zone" style="border-color:rgba(16,185,129,0.3);background:rgba(16,185,129,0.04);" id="zone-command" ondragover="allowDrop(event)" ondrop="dropSort(event,'command')"></div>
+        </div>
+      </div>
+      <p id="sort-fb" style="text-align:center;margin-top:1rem;font-family:'Cinzel',serif;font-size:0.75rem;letter-spacing:0.15em;height:20px;"></p>
+    </div>
+  </section>
+
+  <!-- ㉒ VIDEO 2 -->
+  <section class="slide" id="s22">
+    <div style="max-width:900px;width:100%;">
+      <div style="text-align:center;margin-bottom:1.5rem;">
+        <h2 class="t-title" style="font-size:1.5rem;color:#fff;">The Command</h2>
+        <p style="color:var(--gold);font-size:0.7rem;letter-spacing:0.2em;font-family:'Cinzel',serif;margin-top:0.4rem;">WHAT DOES JESUS SAY? LISTEN CAREFULLY.</p>
+      </div>
+      <div style="position:relative;aspect-ratio:16/9;border-radius:20px;overflow:hidden;border:1px solid rgba(212,175,55,0.2);box-shadow:0 40px 80px rgba(0,0,0,0.8);">
+        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/JMj1ggINLe4?start=110&end=160&rel=0&modestbranding=1" frameborder="0" allowfullscreen style="position:absolute;inset:0;"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- ㉓ BIBLE: JOHN 5:8 -->
+  <section class="slide" id="s23">
+    <div style="width:100%;text-align:center;">
+      <div class="section-label">Sacred Scripture · John 5:8</div>
+      <div class="section-divider"></div>
+      <p style="color:#605850;font-size:0.82rem;margin-bottom:2rem;">Click the Bible to open it.</p>
+      <div class="bible-scene" style="height:460px;" onclick="openBible(this)">
+        <div class="bible-book" id="bible2">
+          <!-- Base Right Page -->
+          <div class="bible-page-r">
+            <div class="bible-ribbon"></div>
+            <div class="bible-verse-label">John · Chapter 5 · Verse 8</div>
+            <p class="bible-verse-text" style="font-size:1.2rem;font-weight:700;color:#1a0a08;">"Pick up your mat and walk."</p>
+          </div>
+          
+          <!-- 3D Edges and Spine -->
+          <div class="bible-edge bible-edge-right"></div>
+          <div class="bible-edge bible-edge-top"></div>
+          <div class="bible-edge bible-edge-bottom"></div>
+          <div class="bible-spine"></div>
+          
+          <!-- Flipping Front Half -->
+          <div class="bible-flip">
+            <!-- Front Cover -->
+            <div class="bible-cover">
+              <div class="bible-cover-corner tl"></div>
+              <div class="bible-cover-corner tr"></div>
+              <div class="bible-cover-corner bl"></div>
+              <div class="bible-cover-corner br"></div>
+              <p class="bible-cover-title">HOLY BIBLE</p>
+              <div class="bible-cover-line"></div>
+              <p class="bible-cover-subtitle">New International Version</p>
+            </div>
+            <!-- Inside Left Page -->
+            <div class="bible-page-l">
+              <div class="bible-verse-label">John · Chapter 5 · Verse 8</div>
+              <p class="bible-verse-text">Then Jesus said to him:</p>
+              <p class="bible-verse-text" style="font-size:1.3rem;font-weight:700;margin-top:1rem;color:#1a0a08;">"Get up!"</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="prompt-box" id="b2-prompt" style="max-width:640px;margin:0 auto;text-align:left;">
+        <div class="prompt-label"><i data-lucide="mic" style="width:11px;height:11px;"></i> Theological Reflection</div>
+        <p class="prompt-text">"Jesus ignores the man's entire speech about his limitations. He issues three commands: Get up. Pick up. Walk. What does it mean that God responds to our excuses not with arguments, but with imperatives?"</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ㉔ FLIP CARDS: THE MAT -->
+  <section class="slide" id="s24">
+    <div style="max-width:960px;width:100%;text-align:center;">
+      <div class="section-label">Theological Insight · The Meaning of the Mat</div>
+      <div class="section-divider"></div>
+      <p class="t-body" style="color:#706060;font-size:0.88rem;margin-bottom:2rem;">Why carry it? Click each card to reveal the meaning.</p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;height:280px;">
+        <div class="flip-card" onclick="this.classList.toggle('flipped');openPrompt('mat-prompt')">
+          <div class="flip-inner">
+            <div class="flip-face flip-front">
+              <i data-lucide="briefcase" style="width:36px;height:36px;color:var(--gold);margin-bottom:1rem;"></i>
+              <p class="t-title" style="font-size:0.9rem;color:#fff;letter-spacing:0.15em;">Responsibility</p>
+            </div>
+            <div class="flip-face flip-back">
+              <p class="t-quote" style="font-size:1rem;color:#fff;line-height:1.6;">He must actively own his new life — healing is not passive.</p>
+            </div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="this.classList.toggle('flipped');openPrompt('mat-prompt')">
+          <div class="flip-inner">
+            <div class="flip-face flip-front">
+              <i data-lucide="door-open" style="width:36px;height:36px;color:var(--gold);margin-bottom:1rem;"></i>
+              <p class="t-title" style="font-size:0.9rem;color:#fff;letter-spacing:0.15em;">No Retreat</p>
+            </div>
+            <div class="flip-face flip-back">
+              <p class="t-quote" style="font-size:1rem;color:#fff;line-height:1.6;">Carrying the mat eliminates his safety net. There is no going back.</p>
+            </div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="this.classList.toggle('flipped');openPrompt('mat-prompt')">
+          <div class="flip-inner">
+            <div class="flip-face flip-front">
+              <i data-lucide="trophy" style="width:36px;height:36px;color:var(--gold);margin-bottom:1rem;"></i>
+              <p class="t-title" style="font-size:0.9rem;color:#fff;letter-spacing:0.15em;">The Trophy</p>
+            </div>
+            <div class="flip-face flip-back">
+              <p class="t-quote" style="font-size:1rem;color:#fff;line-height:1.6;">His place of greatest suffering becomes his greatest testimony.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="prompt-box" id="mat-prompt" style="margin-top:1.5rem;text-align:left;">
+        <div class="prompt-label"><i data-lucide="mic" style="width:11px;height:11px;"></i> Teacher Prompt</div>
+        <p class="prompt-text">"What is your 'mat'? What space of past suffering is God asking you not to abandon, but to carry as evidence of His grace?"</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ㉕ OUTRO -->
+  <section class="slide" id="s25">
+    <div style="text-align:center;max-width:700px;">
+      <div style="font-size:4rem;color:var(--gold);margin-bottom:2rem;text-shadow:0 0 60px rgba(212,175,55,0.5);">✦</div>
+      <p class="t-display" style="font-size:clamp(2.5rem,6vw,5rem);color:#fff;margin-bottom:0.5rem;line-height:1;">Go in peace.</p>
+      <div class="section-divider" style="width:80px;margin:1.5rem auto;"></div>
+      <p class="t-title" style="font-size:0.75rem;color:var(--gold);letter-spacing:0.5em;margin-bottom:3rem;">THE LESSON IS CONCLUDED</p>
+      <button class="btn btn-primary" onclick="toggleJournal()">
+        <i data-lucide="feather" style="width:16px;height:16px;"></i>
+        Open Your Journal
+      </button>
+    </div>
+  </section>
+
+</main>
+
+<!-- NAVIGATION -->
+<nav class="bottom-nav">
+  <button class="nav-btn" id="nav-back" onclick="prevSlide()">
+    <i data-lucide="chevron-left" style="width:14px;height:14px;"></i> Back
+  </button>
+  <div class="nav-counter"><span id="nav-num">1</span> / 25</div>
+  <button class="nav-next-main" id="nav-next" onclick="nextSlide()">
+    Next <i data-lucide="chevron-right" style="width:16px;height:16px;"></i>
+  </button>
+</nav>
+
+<!-- JOURNAL -->
+<div id="journal">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;padding-bottom:1.25rem;border-bottom:1px solid rgba(212,175,55,0.12);">
+    <div>
+      <p class="t-title" style="font-size:0.65rem;color:var(--gold);letter-spacing:0.3em;margin-bottom:0.25rem;">SCRIBE'S JOURNAL</p>
+      <p class="t-display" style="font-size:1.5rem;color:#fff;">My Reflections</p>
+    </div>
+    <button onclick="toggleJournal()" style="background:none;border:none;color:#605050;cursor:pointer;padding:0.5rem;">
+      <i data-lucide="x" style="width:20px;height:20px;"></i>
+    </button>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:1.5rem;overflow-y:auto;flex:1;">
+    <div>
+      <p style="font-size:0.75rem;color:var(--gold);font-family:'Cinzel',serif;letter-spacing:0.2em;margin-bottom:0.6rem;">REFLECTION · Past Perfect Continuous</p>
+      <textarea class="journal-textarea" placeholder="Write about a long period of waiting in your life using 'had been...'"></textarea>
+    </div>
+    <div>
+      <p style="font-size:0.75rem;color:var(--gold);font-family:'Cinzel',serif;letter-spacing:0.2em;margin-bottom:0.6rem;">REFLECTION · Your Excuses</p>
+      <textarea class="journal-textarea" placeholder="What is one excuse you have been carrying? What would it mean to put it down?"></textarea>
+    </div>
+    <div>
+      <p style="font-size:0.75rem;color:var(--gold);font-family:'Cinzel',serif;letter-spacing:0.2em;margin-bottom:0.6rem;">REFLECTION · Your Mat</p>
+      <textarea class="journal-textarea" placeholder="What is your 'mat' — your testimony that God is asking you to carry proudly?"></textarea>
+    </div>
+  </div>
+</div>
+
+<script>
+lucide.createIcons();
+
+/* ---- PARTICLES ---- */
+(function createParticles(){
+  const canvas = document.querySelector('.bg-canvas');
+  for(let i=0;i<12;i++){
+    const p = document.createElement('div');
+    p.className = 'bg-particle';
+    const size = Math.random()*3+1;
+    p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;animation-duration:${Math.random()*20+15}s;animation-delay:${Math.random()*15}s;`;
+    canvas.appendChild(p);
+  }
+})();
+
+/* ---- SLIDES ---- */
+const slides = document.querySelectorAll('.slide');
+let cur = 0;
+
+function goTo(n) {
+  slides[cur].classList.remove('active');
+  slides[cur].classList.add('exiting');
+  setTimeout(()=>slides[cur].classList.remove('exiting'), 700);
+  cur = n;
+  slides[cur].classList.add('active');
+  document.getElementById('nav-num').textContent = cur + 1;
+  document.getElementById('nav-back').disabled = cur === 0;
+  document.getElementById('nav-next').style.display = cur === slides.length-1 ? 'none' : '';
+}
+function nextSlide(){ if(cur < slides.length-1) goTo(cur+1); }
+function prevSlide(){ if(cur > 0) goTo(cur-1); }
+goTo(0);
+
+/* ---- JOURNAL ---- */
+function toggleJournal(){ document.getElementById('journal').classList.toggle('open'); }
+
+/* ---- PROMPT ---- */
+function openPrompt(id){ document.getElementById(id).classList.add('open'); }
+
+/* ---- OPINION SCALES ---- */
+function selectOpinion(btn, promptId){
+  btn.closest('[id$="-opts"]')?.querySelectorAll('.opinion-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  openPrompt(promptId);
+}
+
+/* ---- DRAG & DROP ---- */
+function allowDrop(e){ e.preventDefault(); }
+function drag(e){ e.dataTransfer.setData('text',e.target.id); }
+function drop(e){
+  e.preventDefault();
+  const id = e.dataTransfer.getData('text');
+  const el = document.getElementById(id);
+  const t = e.target;
+  if(t.classList.contains('drop-zone')) t.appendChild(el);
+  else if(t.parentElement?.classList.contains('drop-zone')) t.parentElement.appendChild(el);
+  else if(t.id.includes('bank')||t.id.includes('bank')) t.appendChild(el);
+}
+
+/* ---- VOCAB DROP ---- */
+function dropVocab(e, expected){
+  e.preventDefault();
+  const id = e.dataTransfer.getData('text');
+  const el = document.getElementById(id);
+  const t = e.target.classList.contains('drop-zone') ? e.target : e.target.closest('.drop-zone');
+  if(!t) return;
+  t.appendChild(el);
+  if(id === expected){
+    el.classList.remove('wrong'); el.classList.add('correct');
+    const filled = ['def1','def2','def3','def4'].filter(d=>document.getElementById(d).children.length>0);
+    if(filled.length>=2) openPrompt('vocab-prompt');
+  } else {
+    el.classList.remove('correct'); el.classList.add('wrong');
+  }
+}
+
+/* ---- UNJUMBLE ---- */
+function checkJumble(){
+  const drop = document.getElementById('jumble-drop');
+  const children = Array.from(drop.querySelectorAll('[id]')).map(e=>e.id);
+  if(children.join('')==='j2j3j1'){
+    drop.style.borderColor='#10b981'; drop.style.background='rgba(16,185,129,0.06)';
+    openPrompt('jumble-prompt');
+  } else {
+    drop.classList.add('shake');
+    setTimeout(()=>drop.classList.remove('shake'),500);
+  }
+}
+
+/* ---- FORMULA EXPLORER ---- */
+const formulaData = {
+  had: { title:'HAD · Auxiliary of the Past', body:'Places the entire action firmly in the past tense, establishing that everything occurred before the secondary event (Jesus\' arrival). It sets the temporal anchor.' },
+  been: { title:'BEEN · State of Existence', body:'Signals that the subject did not merely perform an action — he existed in a state. The man did not just lie down; lying there was his entire life and identity.' },
+  verb: { title:'VERB(ING) · Continuous Aspect', body:'The progressive form emphasizes the relentless, unbroken duration of the action. It was not occasional — it was constant. 38 years of continuous, painful persistence.' }
+};
+function exploreFormula(key){
+  document.querySelectorAll('.formula-block').forEach(b=>b.classList.remove('active'));
+  document.getElementById('fb-'+key).classList.add('active');
+  document.getElementById('formula-title').textContent = formulaData[key].title;
+  document.getElementById('formula-body').textContent = formulaData[key].body;
+  document.getElementById('formula-reveal').classList.add('open');
+}
+
+/* ---- FUSE EVENT ---- */
+function fuseEvent(){
+  document.getElementById('btn-fuse').style.display='none';
+  document.getElementById('fused-result').style.display='block';
+}
+
+/* ---- SYNTAX CHECK ---- */
+function checkSyntax2(){
+  const dz = document.getElementById('dz2');
+  const words = Array.from(dz.children).map(c=>c.textContent.trim());
+  const correct = ['They','had','been','waiting','for','years'];
+  const fb = document.getElementById('sfb');
+  if(JSON.stringify(words)===JSON.stringify(correct)){
+    fb.style.color='#10b981'; fb.textContent='✦ CORRECT SYNTAX — WELL DONE';
+  } else {
+    fb.style.color='var(--burg-light)'; fb.textContent='NOT QUITE — CHECK THE ORDER';
+    dz.classList.add('shake'); setTimeout(()=>dz.classList.remove('shake'),500);
+  }
+}
+
+/* ---- ERROR DETECTION ---- */
+const errors = [
+  { html: 'He was tired because he <span class="error-word" onclick="errClick(this,true,0)">has</span> been crying for hours.', answer:'HAS → HAD' },
+  { html: 'They had been <span class="error-word" onclick="errClick(this,false,1)">standing</span> by the pool when Jesus <span class="error-word" onclick="errClick(this,true,1)">arrive</span>.', answer:'ARRIVE → ARRIVED' },
+  { html: 'The man had been <span class="error-word" onclick="errClick(this,true,2)">laying</span> there for 38 long years before he was <span class="error-word" onclick="errClick(this,false,2)">healed</span>.', answer:'LAYING → LYING' }
+];
+let errStage=0;
+function loadError(){
+  if(errStage<errors.length){
+    document.getElementById('stage-lbl').textContent='Stage '+(errStage+1)+' of 3';
+    document.getElementById('err-game').innerHTML=errors[errStage].html;
+    document.getElementById('err-fb').textContent='';
+  } else {
+    document.getElementById('stage-lbl').textContent='Complete';
+    document.getElementById('err-game').innerHTML='<span style="color:#10b981;font-family:Cinzel,serif;font-size:1rem;letter-spacing:0.15em;">✦ All errors found. Grammar mastery achieved.</span>';
+    document.getElementById('err-fb').textContent='';
+  }
+}
+function errClick(el, isCorrect, stage){
+  if(stage!==errStage) return;
+  const fb=document.getElementById('err-fb');
+  if(isCorrect){
+    el.classList.add('found');
+    fb.style.color='#10b981';
+    fb.textContent='✦ Correct! The fix: '+errors[stage].answer;
+    errStage++;
+    setTimeout(loadError, 2500);
+  } else {
+    el.classList.add('wrong');
+    fb.style.color='var(--burg-light)';
+    fb.textContent='That word is correct — keep looking.';
+    setTimeout(()=>el.classList.remove('wrong'), 1200);
+  }
+}
+loadError();
+
+/* ---- SORT DROP ---- */
+function dropSort(e,type){
+  e.preventDefault();
+  const id = e.dataTransfer.getData('text');
+  const el = document.getElementById(id);
+  const t = e.target.classList.contains('drop-zone') ? e.target : e.target.closest('.drop-zone');
+  if(t) t.appendChild(el);
+  const bank = document.getElementById('truth-bank');
+  if(bank.children.length===0){
+    document.getElementById('sort-fb').style.color='#10b981';
+    document.getElementById('sort-fb').textContent='✦ Perfectly balanced. As all things should be.';
+  }
+}
+
+/* ---- TIMELINE ---- */
+function animateTimeline(){
+  const prog = document.getElementById('tl-prog');
+  prog.style.opacity = '1'; prog.style.width = '60%';
+  setTimeout(()=>{ document.getElementById('tl-dot2').classList.add('lit'); }, 1800);
+}
+
+/* ---- BIBLE 3D ---- */
+function openBible(scene){
+  const book = scene.querySelector('.bible-book');
+  if(book.classList.contains('open')) return;
+  book.classList.add('open');
+  scene.style.cursor='default';
+  const id = book.id==='bible1' ? 'b1-prompt' : 'b2-prompt';
+  setTimeout(()=>openPrompt(id), 1600);
+}
+
+/* ---- SPIN WHEEL ---- */
+let wheelDeg = 0;
+function spinWheel(){
+  const w = document.getElementById('wheel');
+  wheelDeg += 2400 + Math.random()*1800;
+  w.style.transform = `rotate(${wheelDeg}deg)`;
+  const prompts=[
+    "Tell me about a time you had been feeling TIRED before God surprised you with something new.",
+    "Tell me about a moment you had been feeling genuinely HAPPY — then something interrupted that season.",
+    "Describe a time you had been feeling ANGRY for a long time before you finally chose to forgive.",
+    "Tell me about what you had been WAITING for before your most significant breakthrough.",
+    "Share about a time you had been PRAYING for something relentlessly — what happened?",
+    "Describe a period where you had been feeling RELIEVED right before a new challenge began."
+  ];
+  setTimeout(()=>{
+    document.getElementById('wheel-q').textContent = prompts[Math.floor(Math.random()*prompts.length)];
+    openPrompt('wheel-prompt');
+  }, 5800);
+}
+</script>
+</body>
+</html>
